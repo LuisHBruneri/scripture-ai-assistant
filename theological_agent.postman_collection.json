@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "c939a3b0-0010-482a-9418-508544c48325",
+		"name": "Theological AI Agent",
+		"description": "Collection for testing the Theological Conversational Agent API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Chat Query",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"O que é a graça justificadora?\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8001/chat",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"chat"
+					]
+				},
+				"description": "Endpoint to ask theological questions."
+			},
+			"response": []
+		}
+	]
+}

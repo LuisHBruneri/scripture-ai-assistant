@@ -1,0 +1,67 @@
+# System
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Secrets (CRITICAL)
+.env
+.env.*
+!.env.example
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+site/
+
+# Virtual Environment
+venv/
+env/
+.venv/
+backend/venv/
+backend/.venv/
+
+# Docker
+chroma_data/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Source Docs (optional: if you don't want to commit the actual PDFs)
+# source_docs/
+!source_docs/.gitkeep
+
+# IDE Project Files
+*.iml
+*.ipr
+*.iws
+
+# Android/Flutter local properties
+local.properties
+*.log
