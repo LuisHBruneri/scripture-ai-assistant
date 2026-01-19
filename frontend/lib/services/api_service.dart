@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
@@ -9,25 +10,56 @@ class ApiService {
   
   // Helper to switch base URL if needed (e.g. via settings)
   String baseUrl = _baseUrl;
+  
+  late final String _sessionId;
 
-  Future<Map<String, dynamic>> sendMessage(String query) async {
+  ApiService() {
+    _sessionId = _generateSessionId();
+  }
+
+  String _generateSessionId() {
+    final random = Random();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final randomPart = random.nextInt(1000000);
+    return 'session_$timestamp$randomPart';
+  }
+
+  Stream<Map<String, dynamic>> sendMessageStream(String query) async* {
+    final client = http.Client();
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/chat'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'query': query}),
-      );
+      final request = http.Request('POST', Uri.parse('$baseUrl/chat'));
+      request.headers['Content-Type'] = 'application/json';
+      request.body = jsonEncode({
+        'query': query,
+        'session_id': _sessionId,
+      });
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to load response: ${response.statusCode}');
+      final response = await client.send(request);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to connect: ${response.statusCode}');
+      }
+
+      final stream = response.stream
+          .transform(utf8.decoder)
+          .transform(const LineSplitter());
+
+      await for (final line in stream) {
+        if (line.startsWith('data: ')) {
+          final jsonStr = line.substring(6);
+          try {
+            final data = jsonDecode(jsonStr);
+            yield data;
+          } catch (e) {
+            if (kDebugMode) print("Error parsing SSE JSON: $e");
+          }
+        }
       }
     } catch (e) {
-      if (kDebugMode) {
-        print("API Error: $e");
-      }
-      throw Exception('Failed to connect to server');
+      if (kDebugMode) print("API Stream Error: $e");
+      throw e;
+    } finally {
+      client.close();
     }
   }
 }

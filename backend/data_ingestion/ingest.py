@@ -63,7 +63,13 @@ def ingest_data():
         embedding_function=embeddings,
     )
     
-    vector_store.add_documents(documents=chunks)
+    # Process in batches to avoid hitting ChromaDB limits (max 5461)
+    batch_size = 200
+    for i in range(0, len(chunks), batch_size):
+        batch = chunks[i : i + batch_size]
+        print(f"Ingesting batch {i // batch_size + 1}/{len(chunks) // batch_size + 1} ({len(batch)} chunks)...")
+        vector_store.add_documents(documents=batch)
+        
     print("Ingestion complete!")
 
 if __name__ == "__main__":

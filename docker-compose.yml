@@ -24,6 +24,7 @@ services:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - CHROMADB_HOST=chromadb
       - CHROMADB_PORT=8000
+      - GOOGLE_MODEL_NAME=${GOOGLE_MODEL_NAME:-gemini-1.5-flash}
     depends_on:
       - chromadb
     networks:

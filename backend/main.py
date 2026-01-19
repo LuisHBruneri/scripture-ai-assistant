@@ -21,6 +21,7 @@ app.add_middleware(
 
 class QueryRequest(BaseModel):
     query: str
+    session_id: str = "default_session"
 
 class QueryResponse(BaseModel):
     answer: str
@@ -39,17 +40,25 @@ async def startup_event():
         logger.error(f"Failed to initialize RAG Service: {e}")
         # In a real app, you might want to stop startup or retry
 
-@app.post("/chat", response_model=QueryResponse)
+import json
+from fastapi.responses import StreamingResponse
+
+@app.post("/chat")
 async def chat_endpoint(request: QueryRequest):
     if not rag_service:
          raise HTTPException(status_code=503, detail="RAG Service not initialized")
     
-    try:
-        result = rag_service.get_answer(request.query)
-        return QueryResponse(answer=result["answer"], sources=result["source_documents"])
-    except Exception as e:
-        logger.error(f"Error processing query: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+    async def event_generator():
+        try:
+            # Pass session_id to get_answer_stream
+            async for chunk in rag_service.get_answer_stream(request.query, request.session_id):
+                # Send as Server-Sent Events (SSE) data: JSON\n\n
+                yield f"data: {json.dumps(chunk)}\n\n"
+        except Exception as e:
+            logger.error(f"Error in stream: {e}")
+            yield f"data: {json.dumps({'type': 'error', 'data': str(e)})}\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @app.get("/health")
 def health_check():

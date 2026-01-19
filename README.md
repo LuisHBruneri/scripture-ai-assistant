@@ -30,12 +30,16 @@ docker-compose up --build -d
 ```
 The API becomes available at `http://localhost:8001`.
 
-### 3. Ingest Data
+### 3. Ingest Data (Expand Knowledge)
 Load your theological documents (PDFs/Markdown) into the vector database:
-1. Place files in `source_docs/`.
-2. Run ingestion:
+1. Place PDF or Markdown files in `source_docs/`.
+2. Run the helper script:
 ```bash
-docker-compose run --rm backend python backend/data_ingestion/ingest.py
+./refresh_knowledge.sh
+```
+Alternatively, using Docker directly:
+```bash
+docker-compose exec backend python data_ingestion/ingest.py
 ```
 
 ### 4. Run Frontend
