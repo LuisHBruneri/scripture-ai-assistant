@@ -52,8 +52,9 @@ chroma_data/
 *.swo
 
 # Source Docs (optional: if you don't want to commit the actual PDFs)
-# source_docs/
+source_docs/
 !source_docs/.gitkeep
+source_docs/processed/
 
 # IDE Project Files
 *.iml
