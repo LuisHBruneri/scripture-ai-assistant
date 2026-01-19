@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/message.dart';
 import '../services/api_service.dart';
 import '../widgets/typing_indicator.dart';
@@ -19,6 +20,49 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final List<Message> _messages = [];
   bool _isLoading = false;
+  late Box _chatBox;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+  }
+
+  void _loadMessages() {
+    _chatBox = Hive.box('chat_history');
+    final savedMessages = _chatBox.get('messages', defaultValue: []);
+    if (savedMessages != null && savedMessages is List) {
+      setState(() {
+        _messages.addAll(savedMessages.map((msg) {
+          // Hive stores Map<dynamic, dynamic>, need to cast
+          final map = Map<String, dynamic>.from(msg);
+          return Message(
+            text: map['text'],
+            isUser: map['isUser'],
+            sources: map['sources'] != null ? List<String>.from(map['sources']) : null,
+          );
+        }).toList());
+      });
+      // Scroll to bottom after loading
+      Future.delayed(const Duration(milliseconds: 500), _scrollToBottom);
+    }
+  }
+
+  void _saveMessages() {
+    final messagesJson = _messages.map((msg) => {
+      'text': msg.text,
+      'isUser': msg.isUser,
+      'sources': msg.sources,
+    }).toList();
+    _chatBox.put('messages', messagesJson);
+  }
+
+  Future<void> _clearHistory() async {
+    setState(() {
+      _messages.clear();
+    });
+    await _chatBox.delete('messages');
+  }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -40,6 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add(Message(text: query, isUser: true));
       _isLoading = true;
     });
+    _saveMessages(); // Save user message
     _controller.clear();
     _scrollToBottom();
 
@@ -81,6 +126,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 sources: sources,
               );
             });
+            _saveMessages(); // Save after getting sources
             _scrollToBottom();
           }
         } else if (chunk['type'] == 'error') {
@@ -99,6 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
                  sources: lastMsg.sources,
                );
              });
+             _saveMessages(); // Save error state
              _scrollToBottom();
            }
         }
@@ -123,12 +170,14 @@ class _ChatScreenState extends State<ChatScreen> {
              );
           }
         });
+        _saveMessages(); // Save exception state
       }
     } finally {
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
+        _saveMessages(); // Final save to be sure
       }
     }
   }
@@ -145,6 +194,35 @@ class _ChatScreenState extends State<ChatScreen> {
         elevation: 4,
         shadowColor: Colors.black45,
         iconTheme: const IconThemeData(color: Color(0xFFFDFBF7)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip: 'Limpar Conversa',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  backgroundColor: const Color(0xFFFDFBF7),
+                  title: Text('Limpar Histórico?', style: GoogleFonts.cinzel(fontWeight: FontWeight.bold, color: const Color(0xFF800020))),
+                  content: Text('Isso apagará todas as mensagens desta conversa.', style: GoogleFonts.crimsonText(fontSize: 18)),
+                  actions: [
+                    TextButton(
+                      child: Text('Cancelar', style: GoogleFonts.cinzel(color: Colors.grey)),
+                      onPressed: () => Navigator.of(ctx).pop(),
+                    ),
+                    TextButton(
+                      child: Text('Limpar', style: GoogleFonts.cinzel(color: const Color(0xFF800020), fontWeight: FontWeight.bold)),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        _clearHistory();
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

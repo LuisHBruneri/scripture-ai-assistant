@@ -8,7 +8,23 @@ from backend.core.config import settings
 import chromadb
 
 def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
+    formatted = []
+    for doc in docs:
+        source = doc.metadata.get("source", "Unknown")
+        book = doc.metadata.get("book", "")
+        chapter = doc.metadata.get("chapter", "")
+        verses = doc.metadata.get("verses", "")
+        
+        # If it's a Bible chunk, use precise citation
+        if book and chapter:
+            identifier = f"[{book} {chapter}:{verses}]"
+        else:
+            # Fallback to filename
+            identifier = f"[{source}]"
+            
+        formatted.append(f"{identifier}\n{doc.page_content}")
+        
+    return "\n\n".join(formatted)
 
 class RAGService:
     def __init__(self):
@@ -95,7 +111,14 @@ class RAGService:
             ]
         )
         
-        self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 5})
+        # Upgrade: MMR (Maximal Marginal Relevance) to get diverse and relevant chunks
+        self.retriever = self.vector_store.as_retriever(
+            search_type="mmr",
+            search_kwargs={
+                "k": 8,            # Get more chunks (context is key for "Mastery")
+                "lambda_mult": 0.7 # Balance relevance vs diversity
+            }
+        )
 
     def get_session_history(self, session_id: str) -> ChatMessageHistory:
         if session_id not in self.store:
