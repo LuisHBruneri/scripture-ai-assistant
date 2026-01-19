@@ -64,3 +64,4 @@ source_docs/processed/
 # Android/Flutter local properties
 local.properties
 *.log
+data/

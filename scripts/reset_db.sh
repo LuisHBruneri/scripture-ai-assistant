@@ -4,12 +4,16 @@ cd "$(dirname "$0")/.."
 
 echo "🗑️  Resetando o Banco de Dados (ChromaDB)..."
 
-# 1. Stop containers and remove volumes
-docker-compose down -v
+# 1. Stop containers
+docker-compose down
 
-echo "🧹 Volume de dados removido."
+# 2. Force delete local data folder
+echo "🔥 Removendo arquivos locais de ./data/chroma_db ..."
+rm -rf data/chroma_db
 
-# 2. Restart containers
+echo "🧹 Dados removidos."
+
+# 3. Restart containers
 echo "🔄 Reiniciando containers..."
 docker-compose up -d
 
