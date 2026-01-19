@@ -8,3 +8,5 @@ python-multipart
 pypdf
 python-dotenv
 langchain-chroma
+EbookLib
+beautifulsoup4

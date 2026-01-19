@@ -13,6 +13,11 @@ def download_and_convert():
         with urllib.request.urlopen(URL) as response:
             data = response.read().decode("utf-8-sig")
             bible_data = json.loads(data)
+            
+        # Save JSON for structured ingestion
+        with open("source_docs/bible_data.json", "w", encoding="utf-8") as f:
+            json.dump(bible_data, f, ensure_ascii=False, indent=2)
+            
     except Exception as e:
         print(f"❌ Erro ao baixar: {e}")
         return
