@@ -6,10 +6,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./data/chroma_db:/chroma/chroma
+      - ./data/chroma_db:/data
     environment:
       - IS_PERSISTENT=TRUE
-      - PERSIST_DIRECTORY=/chroma/chroma
     networks:
       - app-network
 

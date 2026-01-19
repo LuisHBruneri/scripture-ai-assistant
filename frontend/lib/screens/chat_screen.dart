@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/message.dart';
@@ -82,6 +83,24 @@ class _ChatScreenState extends State<ChatScreen> {
             });
             _scrollToBottom();
           }
+        } else if (chunk['type'] == 'error') {
+           final errorMsg = chunk['data'] as String;
+           if (mounted) {
+             setState(() {
+               final lastMsg = _messages.last;
+               // If message was empty, just show error. If it had content, append error.
+               final newText = lastMsg.text.isEmpty 
+                   ? "⚠️ Erro: $errorMsg" 
+                   : lastMsg.text + "\n\n⚠️ Erro: $errorMsg";
+               
+               _messages[_messages.length - 1] = Message(
+                 text: newText,
+                 isUser: false,
+                 sources: lastMsg.sources,
+               );
+             });
+             _scrollToBottom();
+           }
         }
       }
     } catch (e) {
@@ -220,48 +239,81 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                   border: isUser ? null : Border.all(color: const Color(0xFFE0D0B8), width: 0.5),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    isUser
-                        ? Text(
-                            message.text,
-                            style: GoogleFonts.crimsonText(color: const Color(0xFFFDFBF7), fontSize: 18, height: 1.3),
-                          )
-                        : MarkdownBody(
-                            data: message.text,
-                            styleSheet: MarkdownStyleSheet(
-                              p: GoogleFonts.crimsonText(color: const Color(0xFF2D241E), fontSize: 18, height: 1.4),
-                              strong: GoogleFonts.crimsonText(fontWeight: FontWeight.bold),
-                              h1: GoogleFonts.cinzel(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF800020)),
-                              h2: GoogleFonts.cinzel(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF5D4037)),
-                              h3: GoogleFonts.cinzel(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF5D4037)),
-                              blockquote: GoogleFonts.crimsonText(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.grey[700]),
-                              blockquoteDecoration: BoxDecoration(
-                                color: const Color(0xFFF5F5F5),
-                                border: Border(left: BorderSide(color: const Color(0xFF800020), width: 4)),
-                                borderRadius: BorderRadius.circular(4),
+                child: SelectionArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      isUser
+                          ? Text(
+                              message.text,
+                              style: GoogleFonts.crimsonText(color: const Color(0xFFFDFBF7), fontSize: 18, height: 1.3),
+                            )
+                          : MarkdownBody(
+                              data: message.text,
+                              selectable: true, 
+                              styleSheet: MarkdownStyleSheet(
+                                p: GoogleFonts.crimsonText(color: const Color(0xFF2D241E), fontSize: 18, height: 1.4),
+                                strong: GoogleFonts.crimsonText(fontWeight: FontWeight.bold),
+                                h1: GoogleFonts.cinzel(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF800020)),
+                                h2: GoogleFonts.cinzel(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF5D4037)),
+                                h3: GoogleFonts.cinzel(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF5D4037)),
+                                blockquote: GoogleFonts.crimsonText(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.grey[700]),
+                                blockquoteDecoration: BoxDecoration(
+                                  color: const Color(0xFFF5F5F5),
+                                  border: Border(left: BorderSide(color: const Color(0xFF800020), width: 4)),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
                             ),
+                      if (!isUser && message.sources != null && message.sources!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.local_library, size: 12, color: Colors.grey),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  "Fontes: ${message.sources!.join(', ')}",
+                                  style: GoogleFonts.cinzel(fontSize: 10, color: Colors.grey[700], fontWeight: FontWeight.w600),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                    if (!isUser && message.sources != null && message.sources!.isNotEmpty)
+                        ),
+                      
+                      // Copy Button Row
                       Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
+                        padding: const EdgeInsets.only(top: 8.0),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Icon(Icons.local_library, size: 12, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                "Fontes: ${message.sources!.join(', ')}",
-                                style: GoogleFonts.cinzel(fontSize: 10, color: Colors.grey[700], fontWeight: FontWeight.w600),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
+                             InkWell(
+                               onTap: () {
+                                 Clipboard.setData(ClipboardData(text: message.text));
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                   SnackBar(
+                                     content: Text('Texto copiado!', style: GoogleFonts.crimsonText(color: Colors.white)),
+                                     backgroundColor: const Color(0xFF800020),
+                                     duration: const Duration(seconds: 1),
+                                   ),
+                                 );
+                               },
+                               child: Padding(
+                                 padding: const EdgeInsets.all(4.0),
+                                 child: Icon(
+                                   Icons.copy_all,
+                                   size: 18,
+                                   color: isUser ? Colors.white54 : Colors.brown[300],
+                                 ),
+                               ),
+                             ),
                           ],
                         ),
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
