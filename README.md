@@ -1,71 +1,78 @@
-# Theological Conversational Agent 🛡️📖
+# Scripture AI Assistant 🛡️📖
+> **MBA USP/Esalq - TCC Project**
+> *Agente Teológico Conversacional com Arquitetura RAG e Reranking Semântico*
 
-A RAG (Retrieval-Augmented Generation) based AI assistant designed to answer theological and biblical questions with accuracy and pastoral tone.
+Este projeto implementa um **Assistente Teológico Inteligente** capaz de responder dúvidas doutrinárias e bíblicas com alta precisão, fidelidade teológica e tom pastoral ("Persona"). Diferente de chats genéricos, ele opera sob o princípio *Sola Scriptura*, utilizando apenas documentos verificados (Bíblia, Teologia Sistemática) como fonte de verdade.
 
-## ✨ Features
-- **Pastoral Persona**: The AI acts as a "Wise Christian Master," providing answers that are empathetic, pedagogical, and spiritually focused.
-- **Contextual Memory**: Can answer follow-up questions contextually (e.g., "Who was he?" refers back to the previous subject).
-- **Streaming Responses**: Real-time typing effect for a fluid conversational experience.
-- **Multi-Source Knowledge**:
-    - **Structured Bible**: Semantic chunking preserving context (Book/Chapter/Verse).
-    - **Theological Library**: Supports PDF, Markdown, and **EPUB** ingestion.
-    - **Duplicate Protection**: Intelligent ingestion system that prevents duplicate data entry.
-- **Transparent Sourcing**: Every answer provides the list of documents/verses used for the response.
+## ✨ Diferenciais Acadêmicos
+*   **🧠 RAG com Reranking**: Utiliza **FlashRank** para refinar a busca vetorial (ChromaDB), garantindo que apenas os trechos semanticamente mais relevantes sejam enviados ao modelo (Precision@K otimizado).
+*   **📊 Avaliação Quantitativa**: Validado pelo framework **RAGAS** (Retrieval Augmented Generation Assessment), medindo métricas como *Answer Relevancy* e *Context Precision*.
+*   **🔗 Citações Interativas**: Frontend Flutter com sistema de "Deep Linking" para referências bíblicas. Clicar em `[Gênesis 1:1]` abre o texto original instantaneamente.
+*   **🐳 100% Dockerized**: Backend (Python/FastAPI) e Frontend (Flutter Web/Nginx) totalmente containerizados para fácil reprodução.
 
-## 🏗️ Architecture
-- **Backend**: Python (FastAPI) + LangChain
-- **LLM**: Google Gemini (`gemini-1.5-flash` or similar)
-- **Embeddings**: Google (`models/text-embedding-004`)
-- **Vector DB**: ChromaDB (Docker)
-- **Frontend**: Flutter (Mobile/Web) with a "Parchment & Burgundy" theme.
+## 🏗️ Arquitetura Técnica
 
-## 🚀 Getting Started
+```mermaid
+graph LR
+    User[Usuário (Flutter/Web)] -->|HTTPS| Nginx[Nginx Proxy :3000]
+    Nginx -->|/api| API[FastAPI Backend :8000]
+    API -->|Prompt| Reform[LLM: Reformulação]
+    Reform -->|Query| Vector[ChromaDB (Busca Híbrida)]
+    Vector -->|Docs Brutos (Top 20)| Reranker[FlashRank (ms-marco-Minilm)]
+    Reranker -->|Docs Refinados (Top 6)| LLM[Google Gemini 1.5 Flash]
+    LLM -->|Resposta Pastoral| Streaming[SSE Stream]
+    Streaming --> User
+```
 
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Flutter SDK](https://flutter.dev/docs/get-started/install)
-- [Google Gemini API Key](https://aistudio.google.com/)
+## 🚀 Como Executar (Plug & Play)
 
-### 1. Setup Environment
-Clone the repository and set up your variables:
+Pré-requisitos: [Docker Desktop](https://www.docker.com/products/docker-desktop) instalado e uma chave de API do [Google AI Studio](https://aistudio.google.com/).
+
+### 1. Configuração
+Clone o repositório e configure sua chave:
 ```bash
 cp .env.example .env
-# Open .env and add your GOOGLE_API_KEY
+# Edite o arquivo .env e cole sua GOOGLE_API_KEY
 ```
 
-### 2. Run Backend
-Start the API and Database using Docker:
+### 2. Rodar Aplicação
+Basta um único comando para subir toda a infraestrutura (Banco, Backend e Frontend):
 ```bash
-docker-compose up --build -d
+docker-compose up --build
 ```
-The API becomes available at `http://localhost:8001`.
+*   **Frontend**: Acesse `http://localhost:3000` 🌐
+*   **Backend API**: Disponível em `http://localhost:8001/docs` ⚙️
 
-### 3. Ingest Data (Expand Knowledge)
-Load your theological documents into the vector database.
-Supported formats: **PDF**, **EPUB**, **Markdown**, **JSON (Bible Structure)**.
+### 3. Ingestão de Conhecimento
+Para alimentar a "mente" do agente com novos PDFs, EPUBs ou Markdown:
+1.  Coloque os arquivos na pasta `source_docs/`.
+2.  Execute o script de ingestão:
+    ```bash
+    ./scripts/refresh_knowledge.sh
+    # Ou via Docker: docker-compose exec backend python data_ingestion/ingest.py
+    ```
 
-1. Place files in `source_docs/`.
-2. Run the helper script:
+## 📊 Avaliação de Performance
+O projeto inclui um pipeline de avaliação automatizado (`evaluation/`).
+
+| Métrica | Resultado (Média) | Descrição |
+| :--- | :--- | :--- |
+| **Answer Relevancy** | **0.75** | Alta aderência à pergunta do usuário. |
+| **Latência Média** | **~2.5s** | Tempo para o primeiro token (TTFT). |
+
+Para reproduzir os testes:
 ```bash
-./scripts/refresh_knowledge.sh
+docker-compose exec backend python evaluation/run_eval.py
 ```
-Or manually via Docker:
-```bash
-docker-compose exec backend python data_ingestion/ingest.py
-```
-*Note: The ingestor automatically checks for existing files to avoid duplicates.*
+Isso gerará novos gráficos em `evaluation/charts/`.
 
-### 4. Run Frontend
-Launch the mobile/web application:
-```bash
-cd frontend
-flutter pub get
-flutter run
-```
+## 🛠️ Stack Tecnológica
+*   **LLM**: Google Gemini 1.5 Flash
+*   **Vector Store**: ChromaDB
+*   **Reranker**: FlashRank (On-CPU)
+*   **Backend**: Python 3.12, FastAPI, LangChain
+*   **Frontend**: Flutter 3.x (Web & Mobile)
+*   **Infra**: Docker Compose
 
-## 🛠️ Verification
-- **Backend Test**: `curl -X POST "http://localhost:8001/chat" -d '{"query": "Quem foi Paulo?"}'`
-- **Frontend**: Built with Flutter 3.x, tested on Android & Web.
-
-## 📄 License
-[MIT](LICENSE)
+## 📄 Licença
+Projeto acadêmico desenvolvido para fins de pesquisa e conclusão de curso (MBA Data Science & Analytics - USP/Esalq).

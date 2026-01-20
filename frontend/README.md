@@ -16,7 +16,7 @@ The official frontend for the Theological AI Agent. Built with Flutter to provid
 - Flutter SDK installed
 - The backend running at `http://localhost:8001` (see root README)
 
-### Run Locally
+### Run Locally (Classic)
 ```bash
 # Get dependencies
 flutter pub get
@@ -25,9 +25,20 @@ flutter pub get
 flutter run
 ```
 
+### Run via Docker (Web)
+To run the full stack including the frontend as a Web App:
+```bash
+docker-compose up --build
+```
+Access at `http://localhost:3000`.
+
 ### Connecting to Backend
-By default, the app looks for the backend at `http://localhost:8001`.
-If running on an Android Emulator, you may need to map the port or change the URL in `lib/services/api_service.dart` to `http://10.0.2.2:8001`.
+By default, the app looks for the backend at:
+- **Web (Docker)**: Use relative path (handled by Nginx).
+- **Mobile (Emulator)**: `http://10.0.2.2:8001`.
+- **iOS Simulator**: `http://localhost:8001`.
+
+Change this logic in `lib/services/api_service.dart` if needed.
 
 ## 📦 Project Structure
 - `lib/screens`: Main UI screens (ChatScreen).
