@@ -322,13 +322,27 @@ class _ChatScreenState extends State<ChatScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       isUser
-                          ? Text(
+                            ? Text(
                               message.text,
                               style: GoogleFonts.crimsonText(color: const Color(0xFFFDFBF7), fontSize: 18, height: 1.3),
                             )
                           : MarkdownBody(
-                              data: message.text,
+                                // transform [Reference] to [Reference](citation:Reference) for clickable interaction
+                              data: message.text.replaceAllMapped(
+                                RegExp(r'\[([a-zA-ZÀ-ÿ0-9\s:.,-]+?)\]'), 
+                                (match) {
+                                  // Avoid double replacing if already a link (simplistic check)
+                                  if (message.text.contains("](${match.group(0)})")) return match.group(0)!;
+                                  return '[${match.group(1)}](citation:${match.group(1)})';
+                                }
+                              ),
                               selectable: true, 
+                              onTapLink: (text, href, title) {
+                                if (href != null && href.startsWith('citation:')) {
+                                   final citationRef = href.replaceFirst('citation:', '');
+                                   _showCitationModal(context, citationRef, message.sources ?? []);
+                                }
+                              },
                               styleSheet: MarkdownStyleSheet(
                                 p: GoogleFonts.crimsonText(color: const Color(0xFF2D241E), fontSize: 18, height: 1.4),
                                 strong: GoogleFonts.crimsonText(fontWeight: FontWeight.bold),
@@ -341,6 +355,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   border: Border(left: BorderSide(color: const Color(0xFF800020), width: 4)),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
+                                a: GoogleFonts.crimsonText(color: const Color(0xFF800020), fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
                               ),
                             ),
                       if (!isUser && message.sources != null && message.sources!.isNotEmpty)
@@ -459,6 +474,79 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showCitationModal(BuildContext context, String citation, List<String> sources) {
+    // 1. Find the best matching source content
+    String content = "Conteúdo não disponível para esta referência.";
+    
+    // Fuzzy matching: look for source that contains the citation string
+    // e.g. Citation "Gênesis 1:1" matches source "[Gênesis 1:1-5] In the beginning..."
+    // Clean citation of brackets if passed
+    final cleanRef = citation.replaceAll('[', '').replaceAll(']', '').trim();
+    
+    // Split ref to find book and chapter (e.g. "Gênesis 1:1" -> "Gênesis 1")
+    // This helps if the user clicked [Gen 1:1] but source is [Gen 1:1-5]
+    
+    for (var src in sources) {
+      if (src.toLowerCase().contains(cleanRef.toLowerCase())) {
+        content = src;
+        break;
+      }
+    }
+    
+    // If exact match failed, try looser match
+    if (content.startsWith("Conteúdo")) {
+       final simpleRefParts = cleanRef.split(':');
+       if (simpleRefParts.isNotEmpty) {
+         final bookChap = simpleRefParts[0]; // "Gênesis 1"
+         for (var src in sources) {
+            if (src.toLowerCase().contains(bookChap.toLowerCase())) {
+              content = src;
+              break;
+            }
+         }
+       }
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFFFDFBF7),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.3,
+        maxChildSize: 0.8,
+        expand: false,
+        builder: (context, scrollController) => Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2)))),
+              const SizedBox(height: 20),
+              Text(
+                "Referência: $cleanRef", 
+                style: GoogleFonts.cinzel(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF800020))
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Text(
+                    content,
+                    style: GoogleFonts.crimsonText(fontSize: 18, height: 1.6, color: const Color(0xFF2D241E)),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
