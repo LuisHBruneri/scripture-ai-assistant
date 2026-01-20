@@ -6,6 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_message_histories import ChatMessageHistory
 from backend.core.config import settings
 import chromadb
+from flashrank import Ranker, RerankRequest
 
 def format_docs(docs):
     formatted = []
@@ -71,7 +72,6 @@ class RAGService:
         self.reformulate_chain = self.reformulate_prompt | self.llm | StrOutputParser()
         
         # 2. System Prompt for Theological Reasoning (The "Brain" Upgrade)
-        from flashrank import Ranker, RerankRequest
         self.ranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2") # Lightweight efficient model
 
         self.system_prompt = (
