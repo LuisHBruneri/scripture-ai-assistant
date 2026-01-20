@@ -71,6 +71,9 @@ class RAGService:
         self.reformulate_chain = self.reformulate_prompt | self.llm | StrOutputParser()
         
         # 2. System Prompt for Theological Reasoning (The "Brain" Upgrade)
+        from flashrank import Ranker, RerankRequest
+        self.ranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2") # Lightweight efficient model
+
         self.system_prompt = (
             "You are a Wise Christian Master and Teacher, embodying the highest level of knowledge "
             "in Christianity, the Bible, Theology, and Human History. "
@@ -112,11 +115,12 @@ class RAGService:
         )
         
         # Upgrade: MMR (Maximal Marginal Relevance) to get diverse and relevant chunks
+        # We retrieve MORE documents initially (k=20) to let the Reranker filter the best ones.
         self.retriever = self.vector_store.as_retriever(
             search_type="mmr",
             search_kwargs={
-                "k": 8,            # Get more chunks (context is key for "Mastery")
-                "lambda_mult": 0.7 # Balance relevance vs diversity
+                "k": 20,           # Broad search for Reranker
+                "lambda_mult": 0.7 
             }
         )
 
@@ -144,8 +148,30 @@ class RAGService:
             except Exception as e:
                 print(f"Error formulating query: {e}")
         
-        # Step 2: Retrieve Docs (using the polished query)
-        docs = await self.retriever.ainvoke(standalone_query)
+        # Step 2: Retrieve Broad Docs
+        broad_docs = await self.retriever.ainvoke(standalone_query)
+        
+        # Step 2.5: RERANKING (Academic Enhancement)
+        # Re-sort docs based on true semantic relevance to the query
+        passages = [
+            {"id": i, "text": doc.page_content, "meta": doc.metadata} 
+            for i, doc in enumerate(broad_docs)
+        ]
+        
+        rerank_request = RerankRequest(query=standalone_query, passages=passages)
+        results = self.ranker.rerank(rerank_request)
+        
+        # Take Top 6 Reranked Docs
+        top_results = results[:6]
+        
+        # Reconstruct Document objects
+        from langchain_core.documents import Document
+        docs = []
+        for res in top_results:
+             # Find original metadata if needed, but flashrank passes it back
+             meta = res.get("meta", {})
+             docs.append(Document(page_content=res["text"], metadata=meta))
+
         context_text = format_docs(docs)
         
         # Step 3: Stream Answer

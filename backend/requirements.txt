@@ -10,3 +10,9 @@ python-dotenv
 langchain-chroma
 EbookLib
 beautifulsoup4
+ragas
+datasets
+pandas
+matplotlib
+seaborn
+flashrank

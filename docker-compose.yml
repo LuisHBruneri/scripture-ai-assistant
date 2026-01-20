@@ -20,6 +20,7 @@ services:
       - "8001:8000" # Expose on 8001 to avoid conflict if running locally too, or just preference. Let's stick to 8000internal->8001external for clarity or just 8000:8000 if we assume pure docker. Let's use 8001 for host to avoid conflict with chroma 8000.
     volumes:
       - ./source_docs:/app/source_docs # Mount docs for ingestion
+      - ./evaluation:/app/evaluation # Mount evaluation scripts
     environment:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - CHROMADB_HOST=chromadb

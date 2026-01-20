@@ -1,0 +1,18 @@
+[
+  {
+    "question": "Quem foi o autor da carta aos Romanos?",
+    "ground_truth": "O apóstolo Paulo foi o autor da carta aos Romanos."
+  },
+  {
+    "question": "Quais são os frutos do espírito?",
+    "ground_truth": "Conforme Gálatas 5:22-23, os frutos do espírito são: amor, gozo, paz, longanimidade, benignidade, bondade, fé, mansidão e temperança."
+  },
+  {
+    "question": "O que é a justificação pela fé?",
+    "ground_truth": "A justificação pela fé é a doutrina de que somos declarados justos diante de Deus não por nossas obras, mas pela fé em Jesus Cristo."
+  },
+  {
+    "question": "Quem construiu a arca?",
+    "ground_truth": "Noé construiu a arca conforme a ordem de Deus."
+  }
+]
