@@ -21,6 +21,7 @@ services:
     volumes:
       - ./source_docs:/app/source_docs # Mount docs for ingestion
       - ./evaluation:/app/evaluation # Mount evaluation scripts
+      - ./scripts:/app/scripts # Mount scripts for enrichment
     environment:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - CHROMADB_HOST=chromadb
