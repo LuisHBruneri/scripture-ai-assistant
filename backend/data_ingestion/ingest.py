@@ -12,6 +12,14 @@ from backend.data_ingestion.processors.base import ProcessorFactory, IngestionPr
 from backend.data_ingestion.processors.gutenberg import GutenbergProcessor
 from backend.data_ingestion.processors.pdf_theology import TheologyPDFProcessor
 
+# --- LOGGING CONFIG ---
+import logging
+logging.basicConfig(level=logging.INFO)
+# Suppress noisy HTTP logs from libraries
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("chromadb").setLevel(logging.WARNING)
+
 # --- REGISTER PROCESSORS ---
 ProcessorFactory.register("gutenberg", GutenbergProcessor())
 ProcessorFactory.register("theology_pdf", TheologyPDFProcessor())
@@ -164,9 +172,16 @@ def ingest_data():
     # Batch Ingest
     print("Ingesting...")
     batch_size = 50
-    for i in range(0, len(docs), batch_size):
+    total_docs = len(docs)
+    
+    for i in range(0, total_docs, batch_size):
         batch = docs[i : i + batch_size]
-        print(f"  Batch {i//batch_size + 1}: {len(batch)} chunks")
+        
+        # Calculate progress
+        current_count = min(i + batch_size, total_docs)
+        percent = (current_count / total_docs) * 100
+        
+        print(f"  [Progress: {current_count}/{total_docs} ({percent:.1f}%)] Ingesting batch of {len(batch)} chunks...")
         vector_store.add_documents(documents=batch)
         
     print("Ingestion Complete!")

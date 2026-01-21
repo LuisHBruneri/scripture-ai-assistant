@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # --- CONFIGURATION ---
-SOURCE_DOCS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../source_docs"))
+SOURCE_DOCS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../source_docs"))
 os.makedirs(SOURCE_DOCS_PATH, exist_ok=True)
 
 # --- ARCHITECTURE: SOURCE STRATEGY PATTERN ---
