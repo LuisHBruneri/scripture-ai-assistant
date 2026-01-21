@@ -1,0 +1,27 @@
+[
+    {
+        "question": "Quais são os nomes dos 12 apóstolos de Jesus?",
+        "ground_truth": "Simão (Pedro), André, Tiago (filho de Zebedeu), João, Filipe, Bartolomeu, Tomé, Mateus, Tiago (filho de Alfeu), Tadeu (ou Judas, filho de Tiago), Simão (o Zelote) e Judas Iscariotes (substituído por Matias).",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "O que é a Justificação pela Fé?",
+        "ground_truth": "É a doutrina de que somos declarados justos diante de Deus não por nossas obras, mas pela fé no sacrifício de Jesus Cristo (Romanos 3:28, Efésios 2:8-9).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "Como posso lidar com a ansiedade segundo a Bíblia?",
+        "ground_truth": "A Bíblia ensina a lançar sobre Deus toda a ansiedade através da oração e súplica com ações de graças, confiando que Ele cuida de nós (Filipenses 4:6-7, 1 Pedro 5:7).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "O que a Bíblia diz sobre a divindade de Jesus?",
+        "ground_truth": "A Bíblia afirma que Jesus é Deus. Ele existia com Deus no princípio, todas as coisas foram feitas por ele (João 1:1-3), e nele habita corporalmente toda a plenitude da divindade (Colossenses 2:9).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "Qual é o grande mandamento segundo Jesus?",
+        "ground_truth": "Amar o Senhor teu Deus de todo o teu coração, de toda a tua alma e de todo o teu entendimento, e amar o teu próximo como a ti mesmo (Mateus 22:37-39).",
+        "category": "Biblical Fact"
+    }
+]

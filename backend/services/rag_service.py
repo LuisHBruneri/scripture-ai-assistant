@@ -230,5 +230,6 @@ class RAGService:
         
         return {
             "answer": answer,
-            "source_documents": [doc.metadata for doc in docs]
+            "source_documents": [doc.metadata for doc in docs],
+            "context_list": [doc.page_content for doc in docs] 
         }

@@ -1,0 +1,152 @@
+[
+    {
+        "question": "Quais são os nomes dos 12 apóstolos de Jesus?",
+        "ground_truth": "Simão (Pedro), André, Tiago (filho de Zebedeu), João, Filipe, Bartolomeu, Tomé, Mateus, Tiago (filho de Alfeu), Tadeu (ou Judas, filho de Tiago), Simão (o Zelote) e Judas Iscariotes (substituído por Matias).",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Onde Jesus nasceu segundo as Escrituras?",
+        "ground_truth": "Jesus nasceu em Belém da Judeia, conforme profetizado em Miqueias 5:2 e narrado em Mateus 2:1 e Lucas 2:4-7.",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Quem escreveu a carta aos Romanos?",
+        "ground_truth": "A carta aos Romanos foi escrita pelo apóstolo Paulo (Romanos 1:1), provavelmente ditada a Tércio (Romanos 16:22).",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Quantos livros tem a Bíblia Protestante?",
+        "ground_truth": "A Bíblia Protestante contém 66 livros: 39 no Antigo Testamento e 27 no Novo Testamento.",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Qual foi o primeiro milagre de Jesus?",
+        "ground_truth": "O primeiro milagre de Jesus foi transformar água em vinho nas bodas de Caná da Galileia (João 2:1-11).",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Quem foi o rei de Israel conhecido por sua sabedoria?",
+        "ground_truth": "Salomão, filho de Davi, foi o rei conhecido por sua sabedoria dada por Deus (1 Reis 3:12).",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Quem liderou o povo de Israel na saída do Egito?",
+        "ground_truth": "Moisés foi escolhido por Deus para liderar o povo de Israel na saída do Egito (Êxodo 3:10).",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Quais são os frutos do Espírito Santo?",
+        "ground_truth": "Segundo Gálatas 5:22-23, o fruto do Espírito é: amor, alegria, paz, longanimidade, benignidade, bondade, fidelidade, mansidão e domínio próprio.",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "O que significa a palavra 'Evangelho'?",
+        "ground_truth": "A palavra 'Evangelho' vem do grego 'euangelion' e significa 'Boas Novas' ou 'Boa Notícia' sobre a salvação em Jesus Cristo.",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "Qual é o grande mandamento segundo Jesus?",
+        "ground_truth": "Amar o Senhor teu Deus de todo o teu coração, de toda a tua alma e de todo o teu entendimento, e amar o teu próximo como a ti mesmo (Mateus 22:37-39).",
+        "category": "Biblical Fact"
+    },
+    {
+        "question": "O que é a Justificação pela Fé?",
+        "ground_truth": "É a doutrina de que somos declarados justos diante de Deus não por nossas obras, mas pela fé no sacrifício de Jesus Cristo (Romanos 3:28, Efésios 2:8-9).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "O que é a Trindade?",
+        "ground_truth": "A Trindade é a doutrina de que existe um único Deus que subsiste em três pessoas distintas e co-iguais: Pai, Filho e Espírito Santo (Mateus 28:19, 2 Coríntios 13:14).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "Qual é o significado do Batismo Cristão?",
+        "ground_truth": "O batismo é um sacramento/ordenança que simboliza a união do crente com Cristo em sua morte e ressurreição, e a purificação dos pecados (Romanos 6:3-4).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "O que é a Santificação?",
+        "ground_truth": "Santificação é o processo contínuo pelo qual o Espírito Santo torna o crente mais parecido com Cristo, separando-o do pecado e dedicando-o a Deus (1 Tessalonicenses 4:3).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "O que a Bíblia diz sobre a divindade de Jesus?",
+        "ground_truth": "A Bíblia afirma que Jesus é Deus. Ele existia com Deus no princípio, todas as coisas foram feitas por ele (João 1:1-3), e nele habita corporalmente toda a plenitude da divindade (Colossenses 2:9).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "Qual é a doutrina da Inerrância Bíblica?",
+        "ground_truth": "É a crença de que a Bíblia, em seus manuscritos originais, é isenta de erros em tudo o que afirma, sendo a Palavra de Deus inspirada (2 Timóteo 3:16).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "O que significa a Expiação Substitutiva?",
+        "ground_truth": "Significa que Jesus morreu no lugar dos pecadores, recebendo a punição que nós merecíamos, para nos reconciliar com Deus (Isaías 53:5, 1 Pedro 3:18).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "O que é a Graça Comum?",
+        "ground_truth": "É a bondade de Deus manifestada a todas as pessoas, crentes e incrédulos, refreando o mal e concedendo bênçãos naturais como sol e chuva (Mateus 5:45).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "Qual é o papel do Espírito Santo na vida do crente?",
+        "ground_truth": "O Espírito Santo convence do pecado, regenera, habita, ensina, guia, consola e capacita o crente para o serviço e testemunho (João 14:26, João 16:8-13).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "O que é a Escatologia?",
+        "ground_truth": "É o estudo das 'últimas coisas' ou do fim dos tempos, incluindo a volta de Cristo, a ressurreição, o juízo final e o estado eterno (Apocalipse).",
+        "category": "Theological Doctrine"
+    },
+    {
+        "question": "Como posso lidar com a ansiedade segundo a Bíblia?",
+        "ground_truth": "A Bíblia ensina a lançar sobre Deus toda a ansiedade através da oração e súplica com ações de graças, confiando que Ele cuida de nós (Filipenses 4:6-7, 1 Pedro 5:7).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "O que devo fazer quando sinto que Deus está longe?",
+        "ground_truth": "Busque a Deus em oração e na Palavra, confie em Suas promessas de que Ele nunca nos deixará, e examine se há pecado não confessado (Salmo 139, Tiago 4:8, Hebreus 13:5).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "Como perdoar alguém que me feriu profundamente?",
+        "ground_truth": "O perdão é uma decisão, não apenas um sentimento. Devemos perdoar como fomos perdoados por Cristo, orar por quem nos perseguiu e entregar a justiça a Deus (Colossenses 3:13, Mateus 6:14-15).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "Como saber a vontade de Deus para minha vida?",
+        "ground_truth": "A vontade de Deus é revelada principalmente na Bíblia (santificação, gratidão). Para decisões específicas, ore por sabedoria e busque conselho de pessoas piedosas (Romanos 12:2, Tiago 1:5).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "Como vencer a tentação?",
+        "ground_truth": "Vigie e ore, fuja das paixões da mocidade, memorize a Escritura para combater mentiras e busque a ajuda do Espírito Santo e de irmãos na fé (Mateus 26:41, 1 Coríntios 10:13, 2 Timóteo 2:22).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "Como devo orar?",
+        "ground_truth": "Ore com sinceridade, em nome de Jesus, segundo a vontade de Deus. Jesus ensinou o 'Pai Nosso' como modelo: adoração, submissão, petição, confissão e proteção (Mateus 6:9-13).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "Qual a importância de ir à igreja?",
+        "ground_truth": "A igreja é o corpo de Cristo. Congregar é essencial para adoração coletiva, edificação mútua, encorajamento e exercício dos dons espirituais (Hebreus 10:25, 1 Coríntios 12).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "Como evangelizar um amigo?",
+        "ground_truth": "Compartilhe o amor de Cristo através do seu testemunho de vida e da mensagem do Evangelho, com mansidão e respeito, orando pela salvação dele (1 Pedro 3:15, Mateus 28:19-20).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "O que a Bíblia diz sobre o namoro?",
+        "ground_truth": "Embora a Bíblia não use a palavra 'namoro', ela ensina princípios de pureza, jugo desigual (não se prender a descrentes) e o objetivo do casamento como uma aliança santa (2 Coríntios 6:14, 1 Tessalonicenses 4:3-5).",
+        "category": "Practical Application"
+    },
+    {
+        "question": "Como lidar com o luto?",
+        "ground_truth": "Chore e lamente, mas não como os que não têm esperança. Busque consolo em Deus, na esperança da ressurreição e no apoio da comunidade cristã (1 Tessalonicenses 4:13-14, 2 Coríntios 1:3-4).",
+        "category": "Practical Application"
+    }
+]
