@@ -65,3 +65,7 @@ source_docs/processed/
 local.properties
 *.log
 data/
+
+# Evaluation Artifacts
+evaluation/charts/
+evaluation/*.csv
