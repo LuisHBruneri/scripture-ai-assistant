@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # AGENT RULES AND GUIDELINES (AGENT_RULES)
 > **Source Code of Conduct for the AI Agent working on this project.**
 
@@ -45,19 +49,24 @@ The system must act as a "Wise Christian Master":
 *   **Error Handling**: Backend must never crash silently. Use `try/except` and clear logs.
 *   **Dependencies**: Check `backend/requirements.txt`. Do not add heavy libs without consultation (mind the Free Tier and hardware limits).
 
-### 4.2. Data Ingestion (`ingest.py`)
+### 4.2. Prompt Engineering & Response Quality
+*   **Structured Output**: Models MUST be instructed to use Markdown Headers (`###`), Bold text, and Lists.
+*   **Depth**: Brief answers are forbidden. Responses must follow the structure: Direct Answer -> Biblical Foundation -> Theological Explanation -> Practical Application.
+*   **Multi-Provider Compatibility**: Prompts must be robust enough to work on both "Smart" (Llama 3 70B) and "Lite" (Gemini Flash) models.
+
+### 4.3. Data Ingestion (`ingest.py`)
 *   **Duplicate Protection**: Maintain logic checking `(source, book)` metadata before ingestion.
 *   **Semantic Chunking**: 
     *   **Bible**: Respect verse boundaries (groups of 5) to avoid cutting sentences.
     *   **General Text**: Use `RecursiveCharacterTextSplitter` (1000 chars / 200 overlap).
 *   **Batching**: Ingest in small batches (50 chunks) to avoid Google API timeouts.
 
-### 4.3. Frontend (Flutter)
+### 4.4. Frontend (Flutter)
 *   **Rendering**: Use `flutter_markdown` to display rich responses (bold, lists).
 *   **Style**: Maintain a clean, "biblical" aesthetic (serif fonts for long text, sober colors).
 *   **Separation**: Small, reusable widgets. Separate state logic (Providers/Bloc) from UI.
 
-### 4.4. Language Convention
+### 4.5. Language Convention
 *   **Code & Comments**: MUST be in **ENGLISH** (International Standard).
     *   Ex: `def get_answer(...)`, `# Retries logic`.
 *   **Content & Persona**: MUST be in **PORTUGUESE (PT-BR)**.
