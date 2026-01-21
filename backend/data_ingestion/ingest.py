@@ -169,9 +169,11 @@ def ingest_data():
     except:
         pass
 
+    import time
+    
     # Batch Ingest
     print("Ingesting...")
-    batch_size = 50
+    batch_size = 50  # Reduced to avoid hitting rate limits
     total_docs = len(docs)
     
     for i in range(0, total_docs, batch_size):
@@ -182,7 +184,24 @@ def ingest_data():
         percent = (current_count / total_docs) * 100
         
         print(f"  [Progress: {current_count}/{total_docs} ({percent:.1f}%)] Ingesting batch of {len(batch)} chunks...")
-        vector_store.add_documents(documents=batch)
+        
+        # Retry Logic
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                vector_store.add_documents(documents=batch)
+                break # Success
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    wait_time = (attempt + 1) * 5
+                    print(f"    [Warn] Batch failed (Attempt {attempt+1}/{max_retries}). Retrying in {wait_time}s... Error: {e}")
+                    time.sleep(wait_time)
+                else:
+                    print(f"    [Error] Failed to ingest batch after {max_retries} attempts. Skipping. Error: {e}")
+
+        # Rate Limiting (Gemini Free Tier is 15 RPM ~ 1 req / 4s)
+        # We also have TPM limits. Being conservative.
+        time.sleep(0.5)
         
     print("Ingestion Complete!")
 
