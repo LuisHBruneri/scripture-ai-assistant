@@ -96,4 +96,8 @@ Isso gerará novos gráficos em `evaluation/charts/`.
 
 ## 📄 Licença
 
-Projeto acadêmico desenvolvido para fins de pesquisa e conclusão de curso (MBA Data Science & Analytics - USP/Esalq).
+Projeto acadêmico desenvolvido para fins de pesquisa e conclusão de curso (MBA Engenharia de Software - USP/Esalq).
+
+---
+
+Desenvolvido por [Luis Henrique Bruneri](https://github.com/luishbruneri) 🇧🇷
