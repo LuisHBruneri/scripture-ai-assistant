@@ -7,6 +7,9 @@ echo "========================================="
 echo "   SCRIPTURE AI ASSISTANT - TREINAMENTO  "
 echo "========================================="
 
+# Ensure we are in the project root
+cd "$(dirname "$0")/.." || exit
+
 # 1. Garantir que o backend está rodando
 echo "Checking backend container..."
 docker-compose up -d backend

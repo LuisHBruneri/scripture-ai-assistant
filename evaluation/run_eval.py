@@ -43,6 +43,9 @@ async def main():
     import argparse
     parser = argparse.ArgumentParser(description="Run RAG Evaluation")
     parser.add_argument("--dataset", type=str, default="evaluation/test_dataset.json", help="Path to the test dataset JSON (relative to backend root)")
+    parser.add_argument("--output", type=str, default="evaluation/validation_report.md", help="Path to the output report markdown file")
+    parser.add_argument("--baseline", action="store_true", help="Run in Baseline Mode (Raw LLM without RAG/Persona)")
+    parser.add_argument("--no-rerank", action="store_true", help="Ablation: Disable Reranker (use raw retrieval)")
     args = parser.parse_args()
 
     print(f"Loading Test Dataset from: {args.dataset}")
@@ -55,6 +58,8 @@ async def main():
     contexts = []
     categories = []
 
+    latencies = []
+
     print(f"Starting Evaluation on {len(data)} questions...")
     
     # Generate Answers
@@ -62,9 +67,21 @@ async def main():
     for i, item in enumerate(data):
         print(f"[{i+1}/{len(data)}] Processing: {item['question']}")
         
+        start_time = time.time()
         try:
             # Get Answer from Agent
-            response = rag_service.get_answer(item['question'])
+            mode_label = 'BASELINE' if args.baseline else ('NO-RERANK' if args.no_rerank else 'AGENT')
+            print(f"   Mode: {mode_label}")
+            
+            response = rag_service.get_answer(
+                item['question'], 
+                baseline=args.baseline,
+                use_rerank=not args.no_rerank
+            )
+            
+            end_time = time.time()
+            latency = end_time - start_time
+            latencies.append(latency)
             
             questions.append(item['question'])
             ground_truths.append(item['ground_truth'])
@@ -78,6 +95,7 @@ async def main():
             
         except Exception as e:
             print(f"Error processing question '{item['question']}': {e}")
+            latencies.append(0.0) # Error latency
             questions.append(item['question'])
             ground_truths.append(item['ground_truth'])
             categories.append(item['category'])
@@ -86,10 +104,10 @@ async def main():
 
     # Create HuggingFace Dataset for Ragas
     dataset_dict = {
-        "question": questions,
-        "answer": answers,
-        "contexts": contexts,
-        "ground_truth": ground_truths
+        "user_input": questions,
+        "response": answers,
+        "retrieved_contexts": contexts,
+        "reference": ground_truths
     }
     dataset = Dataset.from_dict(dataset_dict)
 
@@ -106,7 +124,7 @@ async def main():
         llm=judge_llm, 
         embeddings=judge_embeddings,
         raise_exceptions=False,
-        #run_config=RunConfig(max_workers=1, timeout=600)
+        run_config=RunConfig(max_workers=1, timeout=600)
     )
 
     print("Evaluation Complete!")
@@ -116,16 +134,24 @@ async def main():
     df = results.to_pandas()
     print(f"Dataframe columns: {df.columns}")
     df['category'] = categories # Add category back to DF
+    df['latency_seconds'] = latencies # Add latency metric
     df.to_csv("evaluation/results.csv", index=False)
     print("Results saved to evaluation/results.csv")
 
     # Generate Markdown Report for Qualitative Analysis (Thesis Requirement)
-    generate_markdown_report(df)
+    generate_markdown_report(df, args.output)
 
-def generate_markdown_report(df):
-    report_path = "evaluation/validation_report.md"
+def generate_markdown_report(df, report_path="evaluation/validation_report.md"):
     with open(report_path, "w") as f:
-        f.write("# Relatório de Validação - Agente Teológico (TCC)\n\n")
+        f.write("# Relatório de Validação - Agente Teológico (TCC)\n")
+        f.write(f"**Arquivo Gerado**: {report_path}\n\n")
+        
+        # Business Metrics Section (MBA)
+        f.write("## Métricas de Negócio (Performance)\n")
+        f.write(f"- **Latência Média**: {df['latency_seconds'].mean():.2f} segundos\n")
+        f.write(f"- **Latência Mínima**: {df['latency_seconds'].min():.2f} segundos\n")
+        f.write(f"- **Latência Máxima**: {df['latency_seconds'].max():.2f} segundos\n\n")
+        
         f.write("> **Instruções**: Para cada questão, avalie a resposta do Agente com base nos critérios:\n")
         f.write("> 1. **Precisão Factual/Teológica** (1-5)\n")
         f.write("> 2. **Clareza e Acessibilidade** (1-5)\n")

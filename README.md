@@ -36,15 +36,22 @@ Clone o repositório e configure sua chave:
 
 ```bash
 cp .env.example .env
-# Edite o arquivo .env e cole sua GOOGLE_API_KEY
+# Edite o arquivo .env e cole sua GOOGLE_API_KEY e GOOGLE_MODEL_NAME (DEFAULT: gemini-2.5-flash-lite)
 ```
 
-### 2. Rodar Aplicação
+### 2. Rodar Aplicação (Modo Fácil)
 
-Basta um único comando para subir toda a infraestrutura (Banco, Backend e Frontend):
+Utilize os scripts facilitadores para gerenciar o projeto sem decorar comandos Docker:
 
 ```bash
-docker-compose up --build
+# Iniciar tudo (Backend + Frontend + Banco)
+./scripts/start_app.sh
+
+# Ver logs em tempo real
+./scripts/view_logs.sh
+
+# Parar aplicação
+./scripts/stop_app.sh
 ```
 
 * **Frontend**: Acesse `http://localhost:3000` 🌐
@@ -52,42 +59,53 @@ docker-compose up --build
 
 ### 3. Ingestão de Conhecimento Automatizada
 
-Para alimentar a "mente" do agente com a Bíblia e recursos teológicos (PDFs, Gutenberg, TCC):
+Para alimentar a "mente" do agente com a Bíblia e recursos teológicos:
 
 1. **Modo Automático**:
-    Execute o script mestre que baixa a Bíblia, enriquece com textos teológicos e processa tudo:
+    Execute o script mestre que baixa a Bíblia e processa tudo:
 
     ```bash
-    ./train.sh
+    ./scripts/train.sh
     ```
 
     *Isso executará o download de recursos, a limpeza inteligente de PDFs e a ingestão no ChromaDB.*
 
 2. **Modo Manual**:
-    Coloque seus arquivos (PDF, EPUB, TXT) em `source_docs/` e rode o `./train.sh` novamente.
+    Coloque seus arquivos (PDF, EPUB, TXT) em `source_docs/` e rode o `./scripts/train.sh` novamente.
 
 > **Importante**: Consulte `AGENT_RULES.md` para regras estritas de desenvolvimento e teologia.
 
-## 📊 Avaliação de Performance
+## 📊 Validação Científica (Nível MBA)
 
-O projeto inclui um pipeline de avaliação automatizado (`evaluation/`).
+O projeto inclui um pipeline rigoroso de testes para validação acadêmica, com suporte a **Estudos Comparativos (A/B)** e **Ablação**.
 
-| Métrica | Resultado (Média) | Descrição |
+### 🧪 Modos de Teste
+
+| Modo | Comando | Objetivo |
 | :--- | :--- | :--- |
-| **Answer Relevancy** | **0.75** | Alta aderência à pergunta do usuário. |
-| **Latência Média** | **~2.5s** | Tempo para o primeiro token (TTFT). |
+| **Experimental** (Agente) | `./scripts/run_validation.sh` | Avaliar qualidade máxima (RAG + Rerank + Persona). |
+| **Controle** (Baseline) | `./scripts/run_validation.sh --baseline` | Avaliar LLM puro para provar valor do RAG. |
+| **Ablação** (No-Rerank) | `./scripts/run_validation.sh --no-rerank` | Provar a necessidade do FlashRank na arquitetura. |
 
-Para reproduzir os testes:
+### 🔬 Reprodução Completa ("One-Click Thesis")
+
+Para reproduzir **todos** os experimentos da tese e gerar os relatórios comparativos automaticamente:
 
 ```bash
-docker-compose exec backend python evaluation/run_eval.py
+./scripts/run_full_experiment.sh
 ```
 
-Isso gerará novos gráficos em `evaluation/charts/`.
+Isso gerará 3 artefatos em `evaluation/`:
+1.  `agent_report.md`: Resultados do Sistema Proposto.
+2.  `baseline_report.md`: Resultados da Linha de Base.
+3.  `ablation_report.md`: Justificativa Arquitetural.
+4.  `results.csv`: Dados brutos com latência e métricas RAGAS.
+
+> **Nota**: O tempo total de execução é de aprox. 45-60 min devido aos Rate Limits do Gemini Free Tier.
 
 ## 🛠️ Stack Tecnológica
 
-* **LLM**: Google Gemini 1.5 Flash
+* **LLM**: Google Gemini (DEFAULT: gemini-2.5-flash-lite)
 * **Vector Store**: ChromaDB
 * **Reranker**: FlashRank (On-CPU)
 * **Backend**: Python 3.12, FastAPI, LangChain

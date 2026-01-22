@@ -206,15 +206,58 @@ class RAGService:
         session_history.add_ai_message(full_answer)
             
         # Yield sources at the end
-        unique_sources = list(set([doc.metadata.get("source", "Unknown") for doc in docs]))
-        yield {"type": "sources", "data": unique_sources}
+    def get_answer(self, query: str, session_id: str = "default", baseline: bool = False, use_rerank: bool = True):
+        # Synchronous version fallback
+        
+        if baseline:
+            # BASELINE MODE: No RAG, No Persona. Just standard LLM.
+            from langchain_core.prompts import ChatPromptTemplate
+            
+            baseline_prompt = ChatPromptTemplate.from_messages([
+                ("system", "You are a helpful AI assistant. Answer the user's question based on your general knowledge."),
+                ("human", "{input}"),
+            ])
+            
+            chain = baseline_prompt | self.llm | StrOutputParser()
+            answer = chain.invoke({"input": query})
+            
+            return {
+                "answer": answer,
+                "source_documents": [],
+                "context_list": [] 
+            }
 
-    def get_answer(self, query: str, session_id: str = "default"):
-        # Synchronous version fallback (updated for consistency, though unused by stream endpoint)
+        # NORMAL MODE (RAG + Persona)
         session_history = self.get_session_history(session_id)
         messages = session_history.messages
         
-        docs = self.retriever.invoke(query)
+        # Step 2: Retrieve Broad Docs
+        broad_docs = self.retriever.invoke(query)
+        
+        docs = broad_docs
+        if use_rerank:
+             # Step 2.5: RERANKING (Academic Enhancement)
+            passages = [
+                {"id": i, "text": doc.page_content, "meta": doc.metadata} 
+                for i, doc in enumerate(broad_docs)
+            ]
+            
+            rerank_request = RerankRequest(query=query, passages=passages)
+            results = self.ranker.rerank(rerank_request)
+            
+            # Take Top 6 Reranked Docs
+            top_results = results[:6]
+            
+            # Reconstruct Document objects
+            from langchain_core.documents import Document
+            docs = []
+            for res in top_results:
+                 meta = res.get("meta", {})
+                 docs.append(Document(page_content=res["text"], metadata=meta))
+        else:
+            # Ablation: Take top 6 as is, without reranking smarts
+            docs = broad_docs[:6]
+
         context_text = format_docs(docs)
         
         chain_with_context = (
