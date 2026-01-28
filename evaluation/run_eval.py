@@ -6,6 +6,11 @@ import json
 import pandas as pd
 from datasets import Dataset
 from ragas import evaluate
+# Reverting to standard imports to fix TypeError. 
+# Explicitly suppressing DeprecationWarning to keep logs clean.
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="ragas")
+
 from ragas.metrics import (
     faithfulness,
     answer_relevancy,
@@ -124,7 +129,7 @@ async def main():
         llm=judge_llm, 
         embeddings=judge_embeddings,
         raise_exceptions=False,
-        run_config=RunConfig(max_workers=1, timeout=600)
+        #run_config=RunConfig(max_workers=1, timeout=600)
     )
 
     print("Evaluation Complete!")
