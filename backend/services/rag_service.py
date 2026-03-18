@@ -33,8 +33,9 @@ class RAGService:
             raise ValueError("GOOGLE_API_KEY is not set")
             
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004", 
-            google_api_key=settings.GOOGLE_API_KEY
+            model=settings.GOOGLE_EMBEDDING_MODEL, 
+            google_api_key=settings.GOOGLE_API_KEY,
+            output_dimensionality=settings.GOOGLE_EMBEDDING_DIM
         )
         
         # Connect to ChromaDB

@@ -149,7 +149,11 @@ def ingest_data():
     print("Connecting to ChromaDB...")
     import chromadb
     client = chromadb.HttpClient(host=settings.CHROMADB_HOST, port=settings.CHROMADB_PORT)
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=settings.GOOGLE_API_KEY)
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model=settings.GOOGLE_EMBEDDING_MODEL, 
+        google_api_key=settings.GOOGLE_API_KEY,
+        output_dimensionality=settings.GOOGLE_EMBEDDING_DIM
+    )
     
     vector_store = Chroma(
         client=client,
