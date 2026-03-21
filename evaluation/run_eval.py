@@ -37,7 +37,7 @@ judge_llm = ChatGoogleGenerativeAI(
 )
 
 judge_embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/text-embedding-004",
+    model=settings.GOOGLE_EMBEDDING_MODEL,
     google_api_key=settings.GOOGLE_API_KEY
 )
 
