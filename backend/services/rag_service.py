@@ -154,10 +154,13 @@ class RAGService:
         standalone_query = query
         if history_messages:
             try:
-                standalone_query = await self.reformulate_chain.ainvoke({
+                res = await self.reformulate_chain.ainvoke({
                     "chat_history": history_messages,
                     "input": query
                 })
+                # Force conversion to pure string to avoid 500 Internal Error from Google API
+                # when receiving a LangChain TextAccessor/StringProxy object
+                standalone_query = str(res)
             except Exception as e:
                 print(f"Error formulating query: {e}")
         
