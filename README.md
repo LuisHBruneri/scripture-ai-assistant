@@ -4,7 +4,7 @@
 > **(Engenharia de Software)**
 > **(2026)**
 > 
-> *Agente Conversacional Teológico em Arquitetura RAG: Mitigação de Alucinações e Democratização do Ensino Bíblico*
+> *Agente Conversacional Teológico em Arquitetura RAG: Mitigação de Alucinações para a Fidelidade do Ensino Bíblico*
 
 Este projeto implementa um **Assistente Teológico Inteligente** capaz de responder dúvidas doutrinárias, exegéticas e bíblicas com alta precisão, fidelidade teológica e tom pastoral ("Persona"). Diferente de interfaces de IA genéricas, o agente opera sob o princípio *Sola Scriptura* e auditoria RAG, utilizando estritamente documentos e obras teológicas curadas como fonte de verdade, mitigando o risco de "alucinações" em contextos sensíveis.
 
