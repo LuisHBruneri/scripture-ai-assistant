@@ -41,13 +41,13 @@ A transparência dos dados experimentais é um pilar desta pesquisa. Os relatór
 
 ```mermaid
 graph LR
-    User[Usuário (Flutter/Web)] -->|HTTPS| Nginx[Nginx Proxy :3000]
-    Nginx -->|/api| API[FastAPI Backend :8000]
-    API -->|Prompt| Reform[LLM: Reformulação]
-    Reform -->|Query| Vector[ChromaDB (Busca Híbrida)]
-    Vector -->|Docs Brutos (Top 20)| Reranker[FlashRank (ms-marco-Minilm)]
-    Reranker -->|Docs Refinados (Top 6)| LLM[Google Gemini 2.5 Flash Lite]
-    LLM -->|Resposta Pastoral| Streaming[SSE Stream]
+    User["Usuário (Flutter/Web)"] -->|HTTPS| Nginx["Nginx Proxy :3000"]
+    Nginx -->|/api| API["FastAPI Backend :8000"]
+    API -->|Prompt| Reform["LLM: Reformulação"]
+    Reform -->|Query| Vector["ChromaDB (Busca Híbrida)"]
+    Vector -->|Docs Brutos (Top 20)| Reranker["FlashRank (ms-marco-Minilm)"]
+    Reranker -->|Docs Refinados (Top 6)| LLM["Google Gemini 2.5 Flash Lite"]
+    LLM -->|Resposta Pastoral| Streaming["SSE Stream"]
     Streaming --> User
 ```
 
